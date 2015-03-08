@@ -1,0 +1,73 @@
+<html>
+<body>
+<script type="text/javascript">
+var xmlHttp=null;
+function GetSuggestion(str)
+{
+if (str.length==0)
+  { 
+  document.getElementById("txtHint").innerHTML="";
+  return;
+  }
+try
+  {
+  xmlHttp=new XMLHttpRequest();
+  }
+catch(e)
+  {
+  try
+    {
+    xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+  catch(e)
+    {
+    alert ("Your browser does not support XMLHTTP!");
+    return;  
+    }
+  }
+var url="ControllerServlet?SUBMIT=XML&key="+str+"&cat="+get_radio_value();
+xmlHttp.open("POST",url,false);
+xmlHttp.send(null);
+var z=xmlHttp.responseText;
+
+var t=0;
+document.getElementById("txtHint").innerHTML=" ";
+for(var i=0;i<z.length;i++)
+{
+         if(z.charAt(i)=='*')
+           {
+          var s=z.substring(t,i);
+          document.getElementById("txtHint").innerHTML+=s+" ";
+          t=i+1;
+		}
+}
+
+}
+   
+
+function get_radio_value()
+{
+for (var i=0; i < document.Search.SearchCat.length; i++)
+   {
+   if (document.Search.SearchCat[i].checked)
+      {
+      var rad_val = document.Search.SearchCat[i].value;
+      return rad_val;
+      }
+   }
+}
+
+
+</script>
+SEARCH PAGE
+<form name="Search" action="ControllerServlet" method="post">
+<br><input type="radio" name="SearchCat" value="FullName">Search By Name
+<br><input type="radio" name="SearchCat" value="Books">Search By Books
+<br><br>
+Enter Search Key <input type="text" name="SearchKey" onkeyup="GetSuggestion(this.value)">
+
+</form><div id="txtHint">
+				</div>
+<br><br><br>
+</body>
+</html>
